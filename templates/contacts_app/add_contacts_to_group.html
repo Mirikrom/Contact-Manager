@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        {{ group.name }} - Kontakt qo'shish
+                    </h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                        Guruhga qo'shmoqchi bo'lgan kontaktlarni tanlang
+                    </p>
+                </div>
+                {% if contacts %}
+                <div class="flex space-x-4">
+                    <a href="{% url 'group_detail' group.id %}" 
+                       class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Bekor qilish
+                    </a>
+                    <button type="submit" form="add-contacts-form" id="submitButton" disabled
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 opacity-50 cursor-not-allowed">
+                        Qo'shish
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="px-4 py-5 sm:p-6">
+                {% if contacts %}
+                <form id="add-contacts-form" method="post" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for contact in contacts %}
+                        <div class="relative flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="contact_{{ contact.id }}" 
+                                       name="contacts" 
+                                       type="checkbox" 
+                                       value="{{ contact.id }}"
+                                       onchange="checkSelectedContacts()"
+                                       class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="contact_{{ contact.id }}" class="font-medium text-gray-700">
+                                    {{ contact.first_name }} {{ contact.last_name }}
+                                </label>
+                                <p class="text-gray-500">{{ contact.email }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </form>
+                {% else %}
+                <div class="text-center py-8">
+                    <p class="text-gray-500">Guruhga qo'shish uchun mavjud kontaktlar yo'q.</p>
+                    <div class="mt-4">
+                        <a href="{% url 'contact_add' %}" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            Yangi kontakt qo'shish
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkSelectedContacts() {
+    const checkboxes = document.querySelectorAll('input[name="contacts"]');
+    const submitButton = document.getElementById('submitButton');
+    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+    
+    submitButton.disabled = !anyChecked;
+    if (anyChecked) {
+        submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+}
+</script>
+{% endblock %}

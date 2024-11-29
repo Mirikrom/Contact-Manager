@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Profilni tahrirlash{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Profilni tahrirlash</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="block text-gray-700 mb-2">Foydalanuvchi nomi</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div class="text-red-500 text-sm mt-1">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}" class="block text-gray-700 mb-2">Elektron pochta</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-red-500 text-sm mt-1">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-gray-700 mb-2">Ism</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-gray-700 mb-2">Familiya</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.image.id_for_label }}" class="block text-gray-700 mb-2">Profil rasmi</label>
+                    {{ form.image }}
+                    {% if form.image.errors %}
+                    <div class="text-red-500 text-sm mt-1">{{ form.image.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mt-6">
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-200">
+                        Saqlash
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

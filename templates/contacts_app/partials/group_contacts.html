@@ -1,0 +1,133 @@
+<div id="contacts-container" class="bg-white shadow overflow-hidden sm:rounded-md">
+    {% if contacts %}
+    <ul class="divide-y divide-gray-200">
+        {% for contact in contacts %}
+        <li class="contact-item hover:bg-gray-50">
+            <div class="px-4 py-4 flex items-center sm:px-6">
+                <input type="checkbox" 
+                       value="{{ contact.id }}" 
+                       class="contact-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-4 hidden">
+                
+                <div class="flex items-center space-x-4">
+                    {% if contact.image %}
+                    <img src="{{ contact.image.url }}" alt="{{ contact.first_name }}"
+                        class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span class="text-xl text-gray-500">{{ contact.first_name|first|upper }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-lg font-medium text-gray-900 truncate">
+                                {{ contact.first_name }} {{ contact.last_name }}
+                            </p>
+                        </div>
+                        <div class="mt-1">
+                            {% if contact.phone %}
+                            <p class="text-sm text-gray-500 truncate">
+                                📞 {{ contact.phone }}
+                            </p>
+                            {% endif %}
+                            {% if contact.email %}
+                            <p class="text-sm text-gray-500 truncate">
+                                ✉️ {{ contact.email }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ml-auto flex items-center space-x-4">
+                    <a href="{% url 'contact_edit' contact.id %}?group_id={{ group.id }}" 
+                       class="text-indigo-600 hover:text-indigo-900">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </a>
+                    <form action="{% url 'remove_contact_from_group' group.id contact.id %}" 
+                          method="post" 
+                          class="inline" 
+                          onsubmit="return confirm('Haqiqatan ham bu kontaktni guruhdan olib tashlamoqchimisiz?');">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-600 hover:text-red-900">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Pagination -->
+    {% if contacts.has_other_pages %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div class="flex-1 flex justify-between sm:hidden">
+            {% if contacts.has_previous %}
+            <a href="?page={{ contacts.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Oldingi
+            </a>
+            {% endif %}
+            {% if contacts.has_next %}
+            <a href="?page={{ contacts.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Keyingi
+            </a>
+            {% endif %}
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Jami <span class="font-medium">{{ contacts.paginator.count }}</span> ta kontakt
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if contacts.has_previous %}
+                    <a href="?page={{ contacts.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Oldingi</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    {% endif %}
+
+                    {% for i in contacts.paginator.page_range %}
+                        {% if i <= 2 or i >= contacts.paginator.num_pages|add:"-1" or i >= contacts.number|add:"-1" and i <= contacts.number|add:"1" %}
+                            {% if contacts.number == i %}
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-indigo-50 text-sm font-medium text-indigo-600">
+                                    {{ i }}
+                                </span>
+                            {% else %}
+                                <a href="?page={{ i }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    {{ i }}
+                                </a>
+                            {% endif %}
+                        {% elif forloop.counter0 == 2 or i == contacts.number|add:"-2" or i == contacts.number|add:"2" %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                ...
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if contacts.has_next %}
+                    <a href="?page={{ contacts.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Keyingi</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <p class="px-4 py-4 text-gray-500">Guruhda hech qanday kontakt yo'q.</p>
+    {% endif %}
+</div>

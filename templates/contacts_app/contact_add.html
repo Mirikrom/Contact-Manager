@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Yangi Kontakt Qo'shish</h2>
+    
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.first_name.id_for_label }}">
+                    Ism
+                </label>
+                {{ form.first_name.as_widget }}
+                {% if form.first_name.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.first_name.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.last_name.id_for_label }}">
+                    Familiya
+                </label>
+                {{ form.last_name.as_widget }}
+                {% if form.last_name.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.last_name.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.email.id_for_label }}">
+                    Elektron pochta
+                </label>
+                {{ form.email.as_widget }}
+                {% if form.email.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.email.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.phone.id_for_label }}">
+                    Telefon raqami
+                </label>
+                {{ form.phone.as_widget }}
+                {% if form.phone.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.phone.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.address.id_for_label }}">
+                    Manzil
+                </label>
+                {{ form.address.as_widget }}
+                {% if form.address.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.address.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.image.id_for_label }}">
+                    Kontakt Rasmi
+                </label>
+                {{ form.image.as_widget }}
+                {% if form.image.errors %}
+                    <p class="text-red-500 text-xs italic">{{ form.image.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Kontaktni Saqlash
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('id_image');
+    imageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const maxSize = 10 * 1024 * 1024; // 10 MB
+            if (file.size > maxSize) {
+                alert('Rasm hajmi 10 MB dan oshmasligi kerak.');
+                event.target.value = ''; // Faylni tozalash
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
