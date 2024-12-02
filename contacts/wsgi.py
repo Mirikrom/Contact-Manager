@@ -1,16 +1,14 @@
-"""
-WSGI config for contacts project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
-"""
-
 import os
+import sys
 
+# Django loyihangiz joylashgan papkani aniqlang
+project_path = '/home/mirikrom/contacts_manager'
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
+# Django sozlamalar faylini ko'rsating
+os.environ['DJANGO_SETTINGS_MODULE'] = 'contacts.settings'
+
+# WSGI applicationni yarating
 from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'contacts.settings')
-
 application = get_wsgi_application()
