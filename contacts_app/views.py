@@ -312,27 +312,30 @@ def register(request):
             
             try:
                 user = form.save(commit=False)
-                user.is_active = False  # Email tasdiqlangunicha login qila olmaydi
+                # user.is_active = False  # Email tasdiqlangunicha login qila olmaydi email bilan tasdiqlash uchun yoqish kerak bo'ladi.
+                user.is_active = True  # Email tasdiqlash shart emas.
                 user.save()
                 
                 # Verification token yaratish
-                token = default_token_generator.make_token(user)
+                # token = default_token_generator.make_token(user) #email bilan tasdiqlash uchun yoqish kerak bo'ladi.
                 
                 # Tasdiqlash emailini yuborish
-                verification_url = request.build_absolute_uri(f'/verify-email/{token}/')
-                send_mail(
-                    'Elektron pochtani tasdiqlash',
-                    f'Elektron pochtangizni tasdiqlash uchun ushbu havolani bosing: {verification_url}',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                    fail_silently=False,
-                )
+                # verification_url = request.build_absolute_uri(f'/verify-email/{token}/')
+                # send_mail(
+                #     'Elektron pochtani tasdiqlash',
+                #     f'Elektron pochtangizni tasdiqlash uchun ushbu havolani bosing: {verification_url}',    #email bilan tasdiqlash uchun yoqish kerak bo'ladi.
+                #     settings.DEFAULT_FROM_EMAIL,
+                #     [user.email],
+                #     fail_silently=False,
+                # )
                 
-                messages.success(request, 'Hisobni yaratish uchun elektron pochtangizga kelgan xabarni tasdiqlang.')
+                # messages.success(request, 'Hisobni yaratish uchun elektron pochtangizga kelgan xabarni tasdiqlang.') #email bilan tasdiqlash uchun yoqish kerak bo'ladi.
+                messages.success(request, 'Hisobingiz muvaffaqiyatli yaratildi. Endi tizimga kirishingiz mumkin.')
                 return redirect('login')
             except Exception as e:
-                user.delete()  # Xatolik bo'lsa foydalanuvchini o'chirish
-                messages.error(request, "Email yuborishda xatolik yuz berdi. Iltimos, boshqa email manzil bilan urinib ko'ring.")
+                user.delete()  # Xatolik bo'lsa foydalanuvchini o'chirish 
+                # messages.error(request, "Email yuborishda xatolik yuz berdi. Iltimos, boshqa email manzil bilan urinib ko'ring.")
+                messages.error(request, "Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.")
                 return render(request, 'registration/register.html', {'form': form})
     else:
         form = UserRegistrationForm()
